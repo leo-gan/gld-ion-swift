@@ -7,7 +7,7 @@ The command-line generator is `gld-iongen-swift`.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/leo-gan/gld-ion-swift", from: "0.1.0"),
+    .package(url: "https://github.com/leo-gan/gld-ion-swift", from: "0.2.0"),
 ]
 ```
 
