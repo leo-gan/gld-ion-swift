@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Test the package and build the source archive without editing the release
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Swift release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: ~/swift-6.3.3
+          key: swift-6.3.3-${{ runner.os }}-${{ runner.arch }}
+      - name: Install Swift
+        run: bash scripts/ci-setup.sh
+      - name: Run tests
+        run: bash scripts/run-tests.sh
+      - name: Check generated
+        run: bash scripts/check-generated.sh
+      - name: Publish
+        env:
+          SWIFT_REGISTRY_URL: ${{ secrets.SWIFT_REGISTRY_URL }}
+          SWIFT_REGISTRY_TOKEN: ${{ secrets.SWIFT_REGISTRY_TOKEN }}
+          SWIFT_PACKAGE_ID: ${{ secrets.SWIFT_PACKAGE_ID }}
+          PUBLISH_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${PUBLISH_DRY_RUN}" == "true" ]]; then
+            bash scripts/publish.sh --dry-run
+          else
+            bash scripts/publish.sh
+          fi

@@ -31,6 +31,8 @@ targets: [
 ]
 ```
 
+Registration on the Swift Package Index: [docs/publishing.md](docs/publishing.md).
+
 From a git checkout:
 
 ```bash
