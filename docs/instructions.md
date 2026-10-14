@@ -3,7 +3,7 @@
 These steps assume a Linux machine and Swift 6.3. The Swift module is `Ion`.
 The command-line generator is `gld-iongen-swift`.
 
-## Add the package
+## Install
 
 ```swift
 dependencies: [
