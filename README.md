@@ -1,5 +1,7 @@
 # gld-ion-swift
 
+[Serialization](https://leo-gan.github.io/serialization/) is the hub for the theory, the history, and the benchmarks.
+
 A from-scratch Amazon Ion implementation for Swift.
 The runtime and the code generator are Swift. They do not wrap, link, or vendor
 ion-c, ion-java, ion-swift, or any other C, C++, or Rust Ion library.
