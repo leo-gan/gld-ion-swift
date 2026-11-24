@@ -74,3 +74,24 @@ unknown field is present.
 `testdata/schema/point.ion` is Ion Schema. `label` is a symbol, so the
 generated `String` holds Ion symbol text such as `foo`, not a quoted string.
 `encode` with version `11` writes an Ion 1.1 binary struct.
+
+## Value tree
+
+`encodeTree` and `decodeTree` write one Ion 1.0 value without an `IonDoc`.
+Use them when the value is only null, bool, int, float, string, list, or a
+struct of those. Field names go in one local symbol table, in the order they
+first appear. The datagram is the Ion 1.0 version marker, that table when a
+name is used, then the value.
+
+```swift
+let msg: IonTree = .fields([
+    ("id", .int(7)),
+    ("name", .string("ada")),
+])
+let raw = encodeTree(msg)
+let back = try decodeTree(raw)
+```
+
+`decodeTree` returns one value as itself. Several top-level values come back
+as `.list`. A symbol table annotation is not a value. Other type descriptors
+throw `DecodeError`.
