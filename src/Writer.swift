@@ -692,13 +692,18 @@ func emitCore(_ doc: IonDoc, _ id: Int, _ sm: SymMap, _ buf: inout [UInt8]) thro
             buf.append(0x40)
         } else {
             let bits = doc.floats[n.b]
-            var tmp: [UInt8] = []
-            var s = n.a - 1
+            let width = n.a
+            if width < 14 {
+                buf.append(UInt8((4 << 4) | width))
+            } else {
+                buf.append(UInt8((4 << 4) | 14))
+                varUIntW(&buf, width)
+            }
+            var s = width - 1
             while s >= 0 {
-                tmp.append(UInt8((bits >> UInt64(s * 8)) & 255))
+                buf.append(UInt8((bits >> UInt64(s * 8)) & 255))
                 s -= 1
             }
-            td(&buf, 4, tmp)
         }
     case kDecimal:
         var tmp: [UInt8] = []
@@ -735,6 +740,9 @@ func emitCore(_ doc: IonDoc, _ id: Int, _ sm: SymMap, _ buf: inout [UInt8]) thro
         let sid = sm.sidRef(doc, n.a)
         if sid == 0 {
             buf.append(0x70)
+        } else if sid < 256 {
+            buf.append(0x71)
+            buf.append(UInt8(sid))
         } else {
             var tmp: [UInt8] = []
             var x = sid
